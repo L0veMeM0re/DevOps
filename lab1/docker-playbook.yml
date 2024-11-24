@@ -1,0 +1,104 @@
+---
+- name: Настройка Docker и зависимостей
+  hosts: app
+  become: true
+
+  tasks:
+    - name: Установка необходимых пакетов
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    - name: Добавление GPG-ключа для Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Добавление репозитория Docker
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Обновление кеша менеджера пакетов
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Установка Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Запуск Docker и добавление его в автозапуск
+      systemd:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Добавление текущего пользователя в группу Docker
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+      when: ansible_user != 'root'
+
+    - name: Проверка установленной версии Docker
+      command: docker --version
+      register: docker_version
+
+    - name: Вывод версии Docker
+      debug:
+        msg: "Установленная версия Docker: {{ docker_version.stdout }}"
+        
+- name: Установка Docker SDK для Python
+  hosts: app
+  become: true
+
+  tasks:
+    - name: Установка pip для Python3
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Установка Docker SDK для Python через pip
+      pip:
+        name: docker
+        state: present
+        executable: pip3
+
+    - name: Установка библиотеки requests версии 2.31.0
+      ansible.builtin.pip:
+        name: requests==2.31.0
+
+- name: Развертывание приложения Django
+  hosts: app
+  become: true
+
+  tasks:
+    - name: Запуск контейнера с приложением Django
+      docker_container:
+        name: django_app
+        image: timurbabs/django:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "8000:8000"
+
+    - name: Ожидание перед проверкой сервера (ping)
+      pause:
+        seconds: 10
+
+    - name: Проверка доступности приложения
+      uri:
+        url: http://localhost:8000
+        return_content: yes
+      register: app_response
+
+    - name: Вывод содержимого ответа
+      debug:
+        var: app_response.content
