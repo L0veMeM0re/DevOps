@@ -2,6 +2,12 @@
 
 Научиться пользоваться Ansible Galaxy и писать роли
 
+## Ссылка на GitLab
+[тык](https://gitlab.com/ansible-roles8664248/docker-role)
+
+Файлы связанные с ролью докера есть и тут, в гите, но на всякий случай, прикладываю и на GitLab'e
+
+
 ## **Рекомендуемая документация**
 
 - [Инфраструктура как код #3: Ansible-роли и Galaxy](https://www.youtube.com/watch?v=sEzoDAfLstw)
