@@ -1,0 +1,49 @@
+---
+# lab2/docker/tasks/main.yml
+
+- name: Установка необходимых пакетов
+  apt:
+    name: "{{ docker_apt_packages }}"
+    state: present
+    update_cache: yes
+
+- name: Добавление GPG-ключа для Docker
+  apt_key:
+    url: "{{ docker_gpg_key_url }}"
+    state: present
+
+- name: Добавление репозитория Docker
+  apt_repository:
+    repo: "{{ docker_repository }}"
+    state: present
+
+- name: Обновление кеша менеджера пакетов
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Установка Docker
+  apt:
+    name: "{{ docker_package_name }}"
+    state: present
+
+- name: Запуск Docker и добавление его в автозапуск
+  systemd:
+    name: docker
+    enabled: true
+    state: started
+
+- name: Добавление текущего пользователя в группу Docker
+  user:
+    name: "{{ docker_user }}"
+    groups: docker
+    append: yes
+  when: ansible_user != 'root'
+
+- name: Проверка установленной версии Docker
+  command: docker --version
+  register: docker_version
+
+- name: Вывод версии Docker
+  debug:
+    msg: "Установленная версия Docker: {{ docker_version.stdout }}"
