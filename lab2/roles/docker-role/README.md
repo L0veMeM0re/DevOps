@@ -24,7 +24,7 @@ Role Variables
   
 - `docker_repository`: URL репозитория Docker для добавления в систему. Значение по умолчанию:
 
-docker_repository: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+      "deb [arch=amd64](https://download.docker.com/linux/ubuntu) {{ ansible_distribution_release }} stable"  
 
 
 -`docker_user`: имя пользователя, который будет добавлен в группу docker. Значение по умолчанию:
