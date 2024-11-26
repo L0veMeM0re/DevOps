@@ -1,38 +1,52 @@
-Role Name
+Docker Role
 =========
 
-A brief description of the role goes here.
+Данная роль предназначена для установки Docker и его зависимостей на серверах с использованием Ansible. Она автоматически устанавливает Docker CE, настраивает автозапуск сервиса и добавляет текущего пользователя в группу Docker для работы без прав `sudo`.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- **Операционная система**: Ubuntu (тестировалась на последних версиях LTS).
+- **Ansible**: версия 2.9 и выше.
+- Необходимы права `root` или эквивалентные для установки пакетов и настройки системы.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- `docker_packages`: список пакетов, необходимых для установки Docker. Значение по умолчанию:
+
+  docker_packages:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - docker-ce
+  
+- `docker_repository`: URL репозитория Docker для добавления в систему. Значение по умолчанию:
+
+docker_repository: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+
+
+-`docker_user`: имя пользователя, который будет добавлен в группу docker. Значение по умолчанию:
+
+docker_user: "{{ ansible_user }}"
+
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Данная роль не имеет внешних зависимостей и не требует других ролей для работы.
 
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
 
 License
 -------
 
 BSD
 
-Author Information
+Роль создана в рамках лабораторной работы по Ansible. Для вопросов и предложений можно связаться через GitLab.
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+
+
+
