@@ -1,4 +1,4 @@
 - name: OpenVpn
-  src: git+https://gitlab.com/ansible-deusops-roles/openvpn-role.git
+  src: git+https://gitlab.com/ansible-roles8664248/openvpn-role.git
   scm: git
   version: main
