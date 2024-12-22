@@ -1,0 +1,4 @@
+- name: pgsql
+  src: git+https://gitlab.com/ansible-roles8664248/pgsql.git
+  scm: git
+  version: main
